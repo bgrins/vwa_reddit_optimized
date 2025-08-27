@@ -1,0 +1,15 @@
+{
+  "name": "reddit-forum-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for Reddit forum clone",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test --reporter=list",
+    "test:headed": "playwright test --headed --reporter=list",
+    "test:ui": "playwright test --ui --reporter=list",
+    "test:debug": "playwright test --debug --reporter=list"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

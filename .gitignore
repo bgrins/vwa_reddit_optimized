@@ -1,0 +1,19 @@
+*.tar
+*.sql
+node_modules
+reddit_docker_rebuild/submission_images_optimized
+reddit_docker_rebuild/postmill_app/public/submission_images
+reddit_docker_rebuild/postmill_app/public/submission_images_optimized
+reddit_docker_rebuild/postmill_app/var
+reddit_docker_rebuild/postmill_app/vendor
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+.playwright-mcp
+
+# Environment files
+.env
+.env.local
+*.log

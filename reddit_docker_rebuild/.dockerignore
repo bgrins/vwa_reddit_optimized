@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.md
+.DS_Store
+build.sh
+docker-compose.yml
+.env.local
+postmill_app/var/cache/*
+postmill_app/var/log/*
+postmill_app/node_modules
+node_modules
+postmill_app/.git
+Dockerfile.*
+*.bak
+*.tmp
+postmill_app/public/submission_images_optimized

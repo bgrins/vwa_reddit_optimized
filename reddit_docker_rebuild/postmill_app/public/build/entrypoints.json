@@ -1,0 +1,106 @@
+{
+  "entrypoints": {
+    "main": {
+      "js": [
+        "/build/runtime.b14b009f.js",
+        "/build/1.2885d39a.js",
+        "/build/main.db4d0044.js"
+      ]
+    },
+    "core": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/core.36e8bfa7.css"
+      ]
+    },
+    "fonts/OpenDyslexic": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/fonts/OpenDyslexic.5d09fe02.css"
+      ]
+    },
+    "fonts/Roboto": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/fonts/Roboto.1b769b7e.css"
+      ]
+    },
+    "fonts/Ubuntu": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/fonts/Ubuntu.641a71d3.css"
+      ]
+    },
+    "themes/c4c": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/c4c.2e3dc4c0.css"
+      ]
+    },
+    "themes/forest": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/forest.cc32a139.css"
+      ]
+    },
+    "themes/jst": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/jst.775b30d1.css"
+      ]
+    },
+    "themes/postmill": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/postmill.4bac9561.css"
+      ]
+    },
+    "themes/postmill-classic": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/postmill-classic.e7ab56ca.css"
+      ]
+    },
+    "themes/raddle": {
+      "js": [
+        "/build/runtime.b14b009f.js"
+      ],
+      "css": [
+        "/build/themes/raddle.9212222c.css"
+      ]
+    }
+  },
+  "integrity": {
+    "/build/runtime.b14b009f.js": "sha384-MgZw8IY9d7+hcyKbUpMK8N4JsJ72yHbhDRUxB8I5qUy996yMrBn+PnbVTuDVh7Wd",
+    "/build/1.2885d39a.js": "sha384-TX3isy5uTDbSugz7sw4Jn8Kbvq7imgsI6UCaHiEv8JLDZyxZsNp0TBu6eFlJEKqE",
+    "/build/main.db4d0044.js": "sha384-vaebNPtqpmdNsv2HU8kA/6KxeW61WvAkMeGoR4lR4OEpqTRPRtRhTdCyW5kIRKtk",
+    "/build/core.36e8bfa7.css": "sha384-+DCZcRfDlgpsC+EZwUdN9LyFu18K/QS3QTPSxNl8eToIlsT+4sJzqwAllO8zWKnX",
+    "/build/fonts/OpenDyslexic.5d09fe02.css": "sha384-CQ7e8fY8dDad+g0eHPPccp90WLDZgzwqXXOtI7D/hywETf9LmaG54ZjHpb7+oZsN",
+    "/build/fonts/Roboto.1b769b7e.css": "sha384-PHblYKCHVDInTPsE/C7YLlrz5e/TbcCpxnMKTOmJ1tnMQz7wf2Tf/AzufVJ9IKLY",
+    "/build/fonts/Ubuntu.641a71d3.css": "sha384-mVEfRcwOiXsbb0oUb1YmnMiVvC8sgVuh2RkQNDn3LJ4ofua4wWQb3Kxj+NI1RS0N",
+    "/build/themes/c4c.2e3dc4c0.css": "sha384-ZUwu9pxNg9SSAjI6v/zvnfIwEsuLcPmTCZUqDw13mUcAEEMN6SCM9Sfc6Wl5cX8D",
+    "/build/themes/forest.cc32a139.css": "sha384-osrvDtR5z6lgpZ9LeSVfqXqBzWN2jO1u2gA/rUkVpXVNveKRzg5v7nJfa5hEn5Hl",
+    "/build/themes/jst.775b30d1.css": "sha384-jPHLwgjLKkF/wB1KUSGu88yIvhE4R/ZdoIL3rVzMbR+F71Szfp+MLSLFVn5zav81",
+    "/build/themes/postmill.4bac9561.css": "sha384-GUHG14mZHpncYrnaDoM2Phn9ys9wq1VHhue6IsM3fUo2cg9GVEyvGiCNn7YwYuGq",
+    "/build/themes/postmill-classic.e7ab56ca.css": "sha384-NbmqAD97Sjzu1J3AbYWAKTqk1V+3swJmxAyNHX/VVcA2CXOQKWdrGp+6bvwCKfbH",
+    "/build/themes/raddle.9212222c.css": "sha384-aAMoZ9oxj6UmugCh1iWdXgLbNVtckYwCS9nSaVWPbjQGQQQY5864qlTMRK/Rl79y"
+  }
+}
