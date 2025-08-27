@@ -26,7 +26,7 @@ mv postmill_app/public/submission_images_optimized postmill_app/public/submissio
 
 chmod -R 777 ./reddit_docker_rebuild/postmill_app/
 
-docker build -t reddit-forum-rebuilt:latest .
+docker build -t reddit-forum-rebuilt:latest reddit_docker_rebuild
 
 docker run -d \
   -p 8080:80 \
