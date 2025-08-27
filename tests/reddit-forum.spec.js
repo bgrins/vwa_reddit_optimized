@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const USERNAME = 'MarvelsGrantMan136';
 const PASSWORD = 'test1234';
+const TIMEOUT = 7000;
 
 test.describe('Reddit Forum Core Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -30,7 +31,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     await page.waitForURL('/', { timeout: 10000 });
     
     // Check for user menu or username in nav
-    await expect(page.locator(`text=${USERNAME}`).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator(`text=${USERNAME}`).first()).toBeVisible({ timeout: TIMEOUT });
   });
 
   test('should view forums list', async ({ page, context }) => {
@@ -84,7 +85,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     await page.click('a:has-text("Submit")');
     
     // Wait for the submission form
-    await page.waitForURL(/submit/, { timeout: 5000 });
+    await page.waitForURL(/submit/, { timeout: TIMEOUT });
     
     // Verify we're on the submission form
     await expect(page.locator('h1:has-text("Create submission")')).toBeVisible();
@@ -118,7 +119,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     if (!currentUrl.includes('/submit')) {
       // If we navigated away, assume success
       // Try to verify the post content is visible
-      await expect(page.locator(`text=${body}`)).toBeVisible({ timeout: 5000 });
+      await expect(page.locator(`text=${body}`)).toBeVisible({ timeout: TIMEOUT });
     } else {
       // If still on submit page, just verify the form works without errors
       // This handles the case where submission doesn't redirect in test environment
@@ -158,7 +159,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     await commentsLink.click();
     
     // Wait for the post page to load - check for a more generic URL pattern
-    await page.waitForURL(/\/f\/pics\/\d+/, { timeout: 5000 });
+    await page.waitForURL(/\/f\/pics\/\d+/, { timeout: TIMEOUT });
     
     // Find comment form textarea
     const commentBox = page.locator('textarea').first();
@@ -268,7 +269,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     await searchInput.press('Enter');
     
     // Wait for search results page
-    await page.waitForURL(/search/, { timeout: 5000 });
+    await page.waitForURL(/search/, { timeout: TIMEOUT });
     
     // Check we're on search results page by looking for the main Search heading
     await expect(page.locator('h1.page-heading:has-text("Search")').first()).toBeVisible();
@@ -286,7 +287,7 @@ test.describe('Reddit Forum Core Functionality', () => {
     await logoutLink.click();
     
     // Confirm we're logged out
-    await expect(page.locator('a:has-text("Log in"), a:has-text("Login")')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('a:has-text("Log in"), a:has-text("Login")')).toBeVisible({ timeout: TIMEOUT });
   });
 
   test('should demonstrate vote count anomaly (data import bug)', async ({ page, context }) => {

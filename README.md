@@ -28,11 +28,7 @@ chmod -R 777 ./reddit_docker_rebuild/postmill_app/
 
 docker build -t reddit-forum-rebuilt:latest reddit_docker_rebuild
 
-docker run -d \
-  -p 8080:80 \
-  -p 5433:5432 \
-  --name reddit-forum-rebuilt \
-  reddit-forum-rebuilt:latest
+docker run -d -p 8080:80 -p 5433:5432 --name reddit-forum-rebuilt reddit-forum-rebuilt:latest
 
 npm run test
 ```
