@@ -1,11 +1,12 @@
 *.tar
 *.sql
 node_modules
-reddit_docker_rebuild/submission_images_optimized
-reddit_docker_rebuild/postmill_app/public/submission_images
-reddit_docker_rebuild/postmill_app/public/submission_images_optimized
-reddit_docker_rebuild/postmill_app/var
-reddit_docker_rebuild/postmill_app/vendor
+reddit_base_image/submission_images_optimized
+reddit_base_image/postmill_app/public/submission_images
+reddit_base_image/postmill_app/public/submission_images_optimized
+reddit_base_image/postmill_app/var
+reddit_base_image/postmill_app/vendor
+submission_images.tar.gz
 
 # Playwright test artifacts
 test-results/

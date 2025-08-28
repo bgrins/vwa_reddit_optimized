@@ -1,73 +1,24 @@
-# Single stage build - using everything from the extracted container
-FROM alpine:3.17
+# Multi-stage Dockerfile for reddit-forum
+# Build with: docker build --target=<stage> -t <tag> .
+# Stages: with-postgres (default), without-postgres
+# Requires: bgrins/vwa-reddit-optimized-base:latest image to be built first
 
-# Create necessary directories
-RUN mkdir -p /var/www/html \
-    && mkdir -p /run/nginx \
-    && mkdir -p /run/php \
-    && mkdir -p /var/log/supervisor \
-    && mkdir -p /usr/local/pgsql/data
+# ============================================================================
+# WITH-POSTGRES STAGE - Includes bundled PostgreSQL database
+# ============================================================================
+FROM bgrins/vwa-reddit-optimized-base:latest AS with-postgres
 
-# Copy large submission_images first
-COPY --chown=nginx:nginx postmill_app/public/submission_images /var/www/html/public/submission_images
+# Create PostgreSQL data directory
+RUN mkdir -p /usr/local/pgsql/data
 
-# Copy rest of application (excluding submission_images to avoid duplication)
-COPY postmill_app/assets /var/www/html/assets
-COPY postmill_app/bin /var/www/html/bin
-COPY postmill_app/config /var/www/html/config
-COPY postmill_app/migrations /var/www/html/migrations
-COPY postmill_app/src /var/www/html/src
-COPY postmill_app/templates /var/www/html/templates
-COPY postmill_app/translations /var/www/html/translations
-COPY postmill_app/vendor /var/www/html/vendor
-COPY --chown=nginx:nginx postmill_app/public/build /var/www/html/public/build
-COPY --chown=nginx:nginx postmill_app/public/bundles /var/www/html/public/bundles
-COPY --chown=nginx:nginx postmill_app/public/js /var/www/html/public/js
-COPY --chown=nginx:nginx postmill_app/public/*.* /var/www/html/public/
-COPY postmill_app/*.* /var/www/html/
+# Install PostgreSQL
+RUN apk add --no-cache \
+    postgresql14 \
+    postgresql14-client \
+    postgresql14-contrib
 
 # Copy database dump
 COPY postmill_dump.sql /tmp/
-
-# Install runtime packages only
-RUN apk add --no-cache \
-    nginx \
-    php81 \
-    php81-fpm \
-    php81-pdo \
-    php81-pdo_pgsql \
-    php81-mbstring \
-    php81-xml \
-    php81-ctype \
-    php81-gd \
-    php81-intl \
-    php81-dom \
-    php81-session \
-    php81-iconv \
-    php81-json \
-    php81-opcache \
-    php81-zip \
-    php81-curl \
-    php81-tokenizer \
-    php81-fileinfo \
-    php81-simplexml \
-    php81-xmlwriter \
-    php81-sodium \
-    php81-openssl \
-    php81-bcmath \
-    postgresql14 \
-    postgresql14-client \
-    postgresql14-contrib \
-    supervisor \
-    bash \
-    openssl
-
-# Create media cache directory with proper ownership
-RUN mkdir -p /var/www/html/public/media/cache && \
-    chown -R nginx:nginx /var/www/html/public/media
-
-# Configure PHP (use -f to force overwrite if exists)
-RUN ln -sf /usr/bin/php81 /usr/bin/php || true
 
 # Configure PostgreSQL
 RUN chown -R postgres:postgres /usr/local/pgsql \
@@ -89,10 +40,10 @@ RUN sed -i 's/user = nobody/user = nginx/g' /etc/php81/php-fpm.d/www.conf \
 # Configure PHP settings (memory limit, upload size, etc.)
 COPY php-overrides.ini /etc/php81/conf.d/99-overrides.ini
 
-# Configure Supervisor
+# Configure Supervisor for PostgreSQL + web services
 COPY supervisord.conf /etc/supervisord.conf
 
-# Create startup script
+# Create startup script for bundled version
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
@@ -105,3 +56,44 @@ EXPOSE 80 5432
 # Start services
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+# ============================================================================
+# WITHOUT-POSTGRES STAGE - Standalone application (external database)
+# ============================================================================
+FROM bgrins/vwa-reddit-optimized-base:latest AS without-postgres
+
+# Configure Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/http.d/default.conf
+
+# Configure PHP-FPM
+RUN sed -i 's/user = nobody/user = nginx/g' /etc/php81/php-fpm.d/www.conf \
+    && sed -i 's/group = nobody/group = nginx/g' /etc/php81/php-fpm.d/www.conf \
+    && sed -i 's/;listen.owner = nobody/listen.owner = nginx/g' /etc/php81/php-fpm.d/www.conf \
+    && sed -i 's/;listen.group = nobody/listen.group = nginx/g' /etc/php81/php-fpm.d/www.conf \
+    && sed -i 's/;listen.mode = 0660/listen.mode = 0660/g' /etc/php81/php-fpm.d/www.conf
+
+# Configure PHP settings (memory limit, upload size, etc.)
+COPY php-overrides.ini /etc/php81/conf.d/99-overrides.ini
+
+# Configure Supervisor for web services only (no PostgreSQL)
+COPY supervisord-no-postgres.conf /etc/supervisord.conf
+
+# Copy standalone startup script
+COPY docker-entrypoint-standalone.sh /docker-entrypoint-standalone.sh
+RUN chmod +x /docker-entrypoint-standalone.sh
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Expose only web port
+EXPOSE 80
+
+# Start services
+ENTRYPOINT ["/docker-entrypoint-standalone.sh"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+# ============================================================================
+# DEFAULT TARGET - with-postgres for backward compatibility
+# ============================================================================
+FROM with-postgres AS final
