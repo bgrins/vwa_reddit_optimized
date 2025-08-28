@@ -10,8 +10,8 @@ wget https://archive.org/download/postmill-populated-exposed-withimg/postmill-po
 docker load --input postmill-populated-exposed-withimg.tar
 docker run --name forum -p 9999:80 -d postmill-populated-exposed-withimg
 
-# Extract database dump
-docker exec forum su - postgres -c "pg_dump -U postgres -d postmill > /tmp/postmill_dump.sql"
+# Extract database dump (without ownership to avoid role errors)
+docker exec forum su - postgres -c "pg_dump -U postgres -d postmill --no-owner --no-acl > /tmp/postmill_dump.sql"
 docker cp forum:/tmp/postmill_dump.sql ./reddit_docker_rebuild/postmill_dump.sql
 
 ./optimize_images.sh

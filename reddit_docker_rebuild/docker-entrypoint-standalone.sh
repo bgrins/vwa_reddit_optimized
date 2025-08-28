@@ -21,8 +21,10 @@ EOF
 php /var/www/html/bin/console cache:clear --env=prod --no-debug
 php /var/www/html/bin/console cache:warmup --env=prod --no-debug
 
-# Set permissions
-chown -R nginx:nginx /var/www/html/var
+# Set permissions for runtime directories only
+if [ -d /var/www/html/var ]; then
+    chown -R nginx:nginx /var/www/html/var
+fi
 
 echo "Application ready. Connect to external database via DATABASE_URL."
 exec "$@"

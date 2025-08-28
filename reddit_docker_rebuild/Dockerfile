@@ -20,11 +20,21 @@ RUN apk add --no-cache \
 # Copy database dump
 COPY postmill_dump.sql /tmp/
 
-# Configure PostgreSQL
-RUN chown -R postgres:postgres /usr/local/pgsql \
+# Initialize PostgreSQL and import data during build
+RUN mkdir -p /run/postgresql \
+    && chown -R postgres:postgres /usr/local/pgsql /run/postgresql \
     && su - postgres -c "initdb -D /usr/local/pgsql/data" \
     && echo "host all all 0.0.0.0/0 md5" >> /usr/local/pgsql/data/pg_hba.conf \
-    && echo "listen_addresses='*'" >> /usr/local/pgsql/data/postgresql.conf
+    && echo "listen_addresses='*'" >> /usr/local/pgsql/data/postgresql.conf \
+    && { su - postgres -c "postgres -D /usr/local/pgsql/data" & } \
+    && sleep 10 \
+    && su - postgres -c "createuser -s db_user" \
+    && su - postgres -c "createdb -O db_user postmill" \
+    && su - postgres -c "psql -U db_user -d postmill < /tmp/postmill_dump.sql" \
+    && su - postgres -c "psql -U db_user -d postmill -c \"ALTER USER db_user WITH PASSWORD 'db_password';\"" \
+    && su - postgres -c "pg_ctl -D /usr/local/pgsql/data stop -m fast" \
+    && sleep 5 \
+    && rm /tmp/postmill_dump.sql
 
 # Configure Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
