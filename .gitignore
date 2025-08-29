@@ -7,10 +7,10 @@ reddit_base_image/postmill_app/public/submission_images_optimized
 reddit_base_image/postmill_app/var
 reddit_base_image/postmill_app/vendor
 submission_images.tar.gz
-
+.tmp-*
 .DS_Store
 
-reddit_docker_rebuild/postmill_dump.sql.xz
+postmill_dump.sql.xz
 
 # Playwright test artifacts
 test-results/
