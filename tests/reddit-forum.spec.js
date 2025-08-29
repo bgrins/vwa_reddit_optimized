@@ -293,7 +293,7 @@ test.describe('Reddit Forum Core Functionality', () => {
   test('should demonstrate vote count anomaly (data import bug)', async ({ page, context }) => {
     // This test documents a known issue where upvoting posts with pre-imported Reddit scores
     // causes the displayed count to reset to 1 due to incomplete data migration.
-    // See VOTING_SYSTEM_ANALYSIS.md for full details.
+    // See docs/voting_issue.md for details
     
     await loginUser(page);
     
