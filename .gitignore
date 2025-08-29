@@ -8,6 +8,8 @@ reddit_base_image/postmill_app/var
 reddit_base_image/postmill_app/vendor
 submission_images.tar.gz
 
+.DS_Store
+
 reddit_docker_rebuild/postmill_dump.sql.xz
 
 # Playwright test artifacts

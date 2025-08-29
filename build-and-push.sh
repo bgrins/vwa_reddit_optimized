@@ -1,17 +1,26 @@
 #!/bin/bash
 set -e
 
+echo "Building base image..."
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t bgrins/vwa-reddit-optimized-base:latest \
+  --load \
+  reddit_base_image/
+
+echo "Building and pushing bundled variant (with PostgreSQL)..."
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   --target with-postgres \
-  -t bgrins/vwa-reddit-optimized-bundled:latest \
+  -t ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest \
   --push \
   reddit_docker_rebuild/
 
+echo "Building and pushing standalone variant (external database)..."
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   --target without-postgres \
-  -t bgrins/vwa-reddit-optimized-standalone:latest \
+  -t ghcr.io/bgrins/vwa-reddit-optimized-standalone:latest \
   --push \
   reddit_docker_rebuild/
 

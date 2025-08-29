@@ -15,6 +15,8 @@ build-and-push.sh
 docker-compose.yml
 Dockerfile.*
 
+.DS_Store
+
 # Development/temp files
 *.bak
 *.tmp

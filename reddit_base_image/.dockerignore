@@ -27,9 +27,3 @@ postmill_app/.env.*.local
 .vscode
 *.swp
 *~
-
-# The original uncompressed images directory (we use tar.gz instead)
-postmill_app/public/submission_images/
-
-# Keep the tar.gz file
-!submission_images.tar.gz
