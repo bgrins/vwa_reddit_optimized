@@ -1,0 +1,73 @@
+name: Test Bundled Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Pull bundled image from registry
+      run: docker pull ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest
+    
+    - name: Start container
+      run: |
+        docker run -d \
+          -p 8080:80 \
+          --name reddit-forum \
+          ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest
+    
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for services to start..."
+        sleep 30
+        
+        # Check if web server is responding
+        max_attempts=30
+        attempt=0
+        while [ $attempt -lt $max_attempts ]; do
+          if curl -f http://localhost:8080 > /dev/null 2>&1; then
+            echo "Service is ready!"
+            break
+          fi
+          echo "Waiting for service... (attempt $((attempt + 1))/$max_attempts)"
+          sleep 5
+          attempt=$((attempt + 1))
+        done
+        
+        if [ $attempt -eq $max_attempts ]; then
+          echo "Service failed to start"
+          docker logs reddit-forum
+          exit 1
+        fi
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install test dependencies
+      run: npm install
+    
+    - name: Run tests
+      run: npm run test
+      env:
+        BASE_URL: http://localhost:8080
+    
+    - name: Show container logs on failure
+      if: failure()
+      run: |
+        echo "=== Container logs ==="
+        docker logs reddit-forum
+        echo "=== Container processes ==="
+        docker exec reddit-forum ps aux
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        docker stop reddit-forum || true
+        docker rm reddit-forum || true
