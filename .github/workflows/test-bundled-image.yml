@@ -10,7 +10,26 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
+
+    - name: Free up disk space
+      run: |
+        echo "=== Starting disk cleanup ==="
+        echo "Initial space:"
+        df -h
+
+        # These directories provide the most space savings based on the logs
+        echo "Removing large SDK/runtime directories..."
+        sudo rm -rf /usr/share/dotnet           # ~7GB
+        sudo rm -rf /usr/local/lib/android      # ~11GB
+        sudo rm -rf /opt/ghc                    # ~3GB
+        sudo rm -rf /usr/local/.ghcup           # ~1GB
+
+        # Final space report
+        echo ""
+        echo "=== Cleanup complete ==="
+        echo "Final space:"
+        df -h
+
     - name: Pull bundled image from registry
       run: docker pull ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest
     
