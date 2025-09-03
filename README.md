@@ -38,16 +38,11 @@ The build is split into three images:
 ### Build Process
 
 ```shell
-# Step 1: Build the base image (contains app + images)
-docker build -t ghcr.io/bgrins/vwa-reddit-optimized-base:latest reddit_base_image/
+# Local usage
+./build.sh
 
-# Step 2: Build the variants (uses the base image)
-# Build locally for testing
-docker build --target with-postgres -t ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest reddit_docker_rebuild/
-docker build --target without-postgres -t ghcr.io/bgrins/vwa-reddit-optimized-standalone:latest reddit_docker_rebuild/
-
-# Build and push multi-platform images to Docker Hub
-./build-multiplatform.sh
+# Push to remote
+./build-and-push.sh
 ```
 
 ## Running the Containers
@@ -76,7 +71,6 @@ docker stop reddit-forum && docker rm reddit-forum
 # Remove images
 docker rmi ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest
 docker rmi ghcr.io/bgrins/vwa-reddit-optimized-standalone:latest
-docker rmi ghcr.io/bgrins/vwa-reddit-optimized-base:latest
 
 # Clean build cache
 docker builder prune
