@@ -5,10 +5,53 @@
 
 set -e
 
+# Parse command line arguments
+AGGRESSIVE=false
+CONTAINER_NAME="${CONTAINER_NAME:-forum}"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --aggressive)
+            AGGRESSIVE=true
+            shift
+            ;;
+        --container)
+            CONTAINER_NAME="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--aggressive] [--container CONTAINER_NAME]"
+            exit 1
+            ;;
+    esac
+done
+
 # Configuration
-CONTAINER_NAME="forum"
 SOURCE_DIR="/var/www/html/public/submission_images"
-OUTPUT_DIR="/var/www/html/public/submission_images_optimized"
+if [ "$AGGRESSIVE" = true ]; then
+    OUTPUT_DIR="/var/www/html/public/submission_images_optimized_aggressive"
+else
+    OUTPUT_DIR="/var/www/html/public/submission_images_optimized"
+fi
+
+# Optimization settings based on mode
+if [ "$AGGRESSIVE" = true ]; then
+    JPEG_QUALITY=30
+    GIF_LOSSY=100
+    GIF_COLORS=64
+    PNG_LEVEL=7
+    PNG_STRIP="all"
+    MODE_DESC="AGGRESSIVE"
+else
+    JPEG_QUALITY_LARGE=80
+    JPEG_QUALITY_SMALL=85
+    GIF_LOSSY=0
+    GIF_COLORS=256
+    PNG_LEVEL=2
+    PNG_STRIP="preserve"
+    MODE_DESC="STANDARD"
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -19,6 +62,8 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Simple Image Optimization Script${NC}"
 echo "===================================="
+echo "Container: ${CONTAINER_NAME}"
+echo "Mode: ${MODE_DESC}"
 echo "Processing images into new directory"
 echo ""
 
@@ -116,20 +161,32 @@ docker exec $CONTAINER_NAME sh -c "
         case \"\$ext\" in
             gif|GIF)
                 # Try to optimize GIF
-                gifsicle -O3 --colors 256 \"\$img\" -o \"/tmp/\$img.tmp\" 2>/dev/null || cp \"\$img\" \"/tmp/\$img.tmp\"
+                if [ $GIF_LOSSY -gt 0 ]; then
+                    gifsicle -O3 --lossy=$GIF_LOSSY --colors $GIF_COLORS \"\$img\" -o \"/tmp/\$img.tmp\" 2>/dev/null || cp \"\$img\" \"/tmp/\$img.tmp\"
+                else
+                    gifsicle -O3 --colors $GIF_COLORS \"\$img\" -o \"/tmp/\$img.tmp\" 2>/dev/null || cp \"\$img\" \"/tmp/\$img.tmp\"
+                fi
                 ;;
             png|PNG)
                 # Copy first, then optimize in place
                 cp \"\$img\" \"/tmp/\$img.tmp\"
-                optipng -quiet -o2 -preserve \"/tmp/\$img.tmp\" 2>/dev/null || true
+                if [ \"$PNG_STRIP\" = \"all\" ]; then
+                    optipng -quiet -o$PNG_LEVEL -strip all \"/tmp/\$img.tmp\" 2>/dev/null || true
+                else
+                    optipng -quiet -o$PNG_LEVEL -preserve \"/tmp/\$img.tmp\" 2>/dev/null || true
+                fi
                 ;;
             jpg|jpeg|JPG|JPEG)
                 # Copy first, then optimize
                 cp \"\$img\" \"/tmp/\$img.tmp\"
-                if [ \$original_size -gt 1048576 ]; then
-                    jpegoptim -m80 --strip-all \"/tmp/\$img.tmp\" 2>/dev/null || true
+                if [ \"$AGGRESSIVE\" = true ]; then
+                    jpegoptim -m$JPEG_QUALITY --strip-all \"/tmp/\$img.tmp\" 2>/dev/null || true
                 else
-                    jpegoptim -m85 --strip-all \"/tmp/\$img.tmp\" 2>/dev/null || true
+                    if [ \$original_size -gt 1048576 ]; then
+                        jpegoptim -m$JPEG_QUALITY_LARGE --strip-all \"/tmp/\$img.tmp\" 2>/dev/null || true
+                    else
+                        jpegoptim -m$JPEG_QUALITY_SMALL --strip-all \"/tmp/\$img.tmp\" 2>/dev/null || true
+                    fi
                 fi
                 ;;
         esac
@@ -191,6 +248,17 @@ if [ "$SAVED_MB" != "0" ] && [ "$SOURCE_MB" != "0" ]; then
 fi
 
 echo ""
+echo "Optimization mode: ${MODE_DESC}"
+if [ "$AGGRESSIVE" = true ]; then
+    echo "  JPEG quality: ${JPEG_QUALITY}%"
+    echo "  GIF: lossy=${GIF_LOSSY}, colors=${GIF_COLORS}"
+    echo "  PNG: level=${PNG_LEVEL}, strip=${PNG_STRIP}"
+else
+    echo "  JPEG quality: ${JPEG_QUALITY_LARGE}% (large), ${JPEG_QUALITY_SMALL}% (small)"
+    echo "  GIF: colors=${GIF_COLORS}"
+    echo "  PNG: level=${PNG_LEVEL}, preserve metadata"
+fi
+echo ""
 echo "Commands:"
 echo "  Compare dirs:    docker exec $CONTAINER_NAME sh -c 'du -sh $SOURCE_DIR $OUTPUT_DIR'"
 echo "  Swap to optimized: docker exec $CONTAINER_NAME sh -c 'mv $SOURCE_DIR ${SOURCE_DIR}_old && mv $OUTPUT_DIR $SOURCE_DIR'"
@@ -199,5 +267,11 @@ echo ""
 echo -e "${YELLOW}Note:${NC} Original files remain in $SOURCE_DIR"
 echo "Optimized files are in $OUTPUT_DIR"
 echo "Script is resumable - run again to continue processing"
+echo ""
+echo -e "${YELLOW}Usage:${NC}"
+echo "  Standard mode:    ./optimize_images.sh"
+echo "  Aggressive mode:  ./optimize_images.sh --aggressive"
+echo "  Custom container: ./optimize_images.sh --container mycontainer"
+echo "  Environment var:  CONTAINER_NAME=mycontainer ./optimize_images.sh --aggressive"
 echo ""
 echo -e "${GREEN}Done!${NC}"
