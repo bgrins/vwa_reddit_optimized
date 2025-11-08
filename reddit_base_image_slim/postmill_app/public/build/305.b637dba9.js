@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[305],{HyFC:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(t){return function(e){var n=e||{},u=n.width?String(n.width):t.defaultWidth;return t.formats[u]||t.formats[t.defaultWidth]}},t.exports=e.default}}]);

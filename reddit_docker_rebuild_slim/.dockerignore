@@ -1,0 +1,42 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+README.*
+
+# macOS files
+.DS_Store
+
+# Build scripts and alternative Dockerfiles
+build.sh
+build-and-push.sh
+docker-compose.yml
+Dockerfile.*
+
+.DS_Store
+
+# Development/temp files
+*.bak
+*.tmp
+*.swp
+*~
+
+# IDE files
+.idea
+.vscode
+
+# Environment files (shouldn't be in build context)
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules
+
+# We don't have postmill_app in this directory anymore - it's in reddit_base_image
+postmill_app/
+
+# We don't need submission_images.tar.gz here either - it's in reddit_base_image
+submission_images.tar.gz

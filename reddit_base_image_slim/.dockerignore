@@ -1,0 +1,29 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+README.*
+
+# macOS files
+.DS_Store
+
+# Build artifacts
+build.sh
+*.bak
+*.tmp
+
+# Development files
+postmill_app/var/cache/*
+postmill_app/var/log/*
+postmill_app/var/sessions/*
+postmill_app/node_modules
+postmill_app/.env.local
+postmill_app/.env.*.local
+
+# IDE files
+.idea
+.vscode
+*.swp
+*~

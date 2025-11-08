@@ -1,0 +1,16 @@
+{% from '_macros/alert.html.twig' import alert %}
+{% from '_macros/form.html.twig' import button_row %}
+
+{{ form_start(form) }}
+  {{ form_row(form.username) }}
+
+  {{ form_row(form.password) }}
+
+  {{ form_row(form.email) }}
+
+  {% if form.verification is defined %}
+    {{ form_row(form.verification) }}
+  {% endif %}
+
+  {{ button_row(editing ? 'action.save_changes'|trans : 'action.sign_up'|trans) }}
+{{ form_end(form) }}

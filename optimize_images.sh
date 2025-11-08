@@ -40,7 +40,7 @@ if [ "$AGGRESSIVE" = true ]; then
     JPEG_QUALITY=30
     GIF_LOSSY=100
     GIF_COLORS=64
-    PNG_LEVEL=7
+    PNG_LEVEL=3
     PNG_STRIP="all"
     MODE_DESC="AGGRESSIVE"
 else

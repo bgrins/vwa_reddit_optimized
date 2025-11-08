@@ -28,21 +28,49 @@ rm -r ./reddit_base_image/postmill_app/public/media/cache && mkdir ./reddit_base
 docker stop forum && docker rm forum
 ```
 
-## Building the Docker Images
+## Slim Container
 
-The build is split into three images:
-1. **Base image** - Contains the application code and submission images (~37GB)
-2. **Bundled variant** - Includes PostgreSQL database (~40GB)
-3. **Standalone variant** - External database required (~37GB)
+The slim container variant removes some large and less-used subreddits & more aggressively optimizes images, reducing the size.
 
-### Build Process
 
-```shell
-# Local usage
-./build.sh
+```bash
+docker rm -f forum
+docker run -d -p 9999:80 --name forum ghcr.io/bgrins/vwa-reddit-optimized-bundled:latest
 
-# Push to remote
-./build-and-push.sh
+./cleanup_subreddits.sh --dry-run
+./cleanup_subreddits.sh --execute
+
+./optimize_images.sh --aggressive --container forum
+
+# Move original images to backup, use optimized as main
+docker exec forum sh -c 'rm -rf /var/www/html/public/submission_images_original && \
+  mv /var/www/html/public/submission_images /var/www/html/public/submission_images_original && \
+  mv /var/www/html/public/submission_images_optimized_aggressive /var/www/html/public/submission_images'
+
+docker exec forum du -sh /var/www/html/public/submission_images
+
+# Create slim rebuild directory
+mkdir -p reddit_docker_rebuild_slim
+
+# Dump database to plain SQL (xz not available in container)
+docker exec forum su - postgres -c "pg_dump -U db_user -d postmill --no-owner --no-acl > /tmp/postmill_dump_slim.sql"
+
+# Copy dump to host and compress with xz
+docker cp forum:/tmp/postmill_dump_slim.sql ./reddit_docker_rebuild_slim/
+xz ./reddit_docker_rebuild_slim/postmill_dump_slim.sql
+rclone copy reddit_docker_rebuild_slim/postmill_dump_slim.sql.xz r2:the-zoo/reddit/ -v --progress
+
+# Clean up container before copying (remove backup and cache)
+docker exec forum rm -rf /var/www/html/public/submission_images_original
+docker exec forum sh -c 'rm -rf /var/www/html/public/media/cache && mkdir -p /var/www/html/public/media/cache'
+
+# Copy entire app with optimized images
+docker cp forum:/var/www/html ./reddit_base_image_slim/postmill_app
+
+# Set permissions
+chmod -R 777 ./reddit_base_image_slim/postmill_app/
+
+./build-and-push.sh --slim
 ```
 
 ## Running the Containers

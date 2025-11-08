@@ -1,0 +1,92 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^ArrayObject\\<\\*NEVER\\*, \\*NEVER\\*\\> does not accept bool\\.$#"
+			count: 2
+			path: src/Entity/Comment.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Comment\\:\\:\\$searchDoc is never written, only read\\.$#"
+			count: 1
+			path: src/Entity/Comment.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/Entity/Forum.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Message\\:\\:\\$notifications is never written, only read\\.$#"
+			count: 1
+			path: src/Entity/Message.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: src/Entity/Submission.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Submission\\:\\:\\$searchDoc is never written, only read\\.$#"
+			count: 1
+			path: src/Entity/Submission.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/Entity/Submission.php
+
+		-
+			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
+			count: 2
+			path: src/Form/DataTransformer/ForumTagDataListToStringsTransformer.php
+
+		-
+			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
+			count: 2
+			path: src/Form/DataTransformer/TagArrayToStringTransformer.php
+
+		-
+			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Message/Middleware/RequestContextMiddleware.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/Message/Middleware/RequestContextMiddleware.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of method App\\\\Tests\\\\Controller\\\\Api\\\\ForumControllerTest\\:\\:assertArraySubset\\(\\) expects array\\|ArrayAccess, null given\\.$#"
+			count: 1
+			path: tests/Controller/Api/ForumControllerTest.php
+
+		-
+			message: "#^App\\\\PatternMatcher\\\\PatternCollection\\<\\*NEVER\\*, \\*NEVER\\*\\> does not accept App\\\\Tests\\\\Fixtures\\\\Pattern\\.$#"
+			count: 1
+			path: tests/PatternMatcher/PatternCollectionTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) with 'a' and App\\\\PatternMatcher\\\\PatternCollection\\<int\\|string, App\\\\Tests\\\\Fixtures\\\\Pattern\\> will always evaluate to false\\.$#"
+			count: 1
+			path: tests/PatternMatcher/PatternCollectionTest.php
+
+		-
+			message: "#^Cannot assign offset 'a' to App\\\\PatternMatcher\\\\PatternCollection\\<\\*NEVER\\*, \\*NEVER\\*\\>\\.$#"
+			count: 1
+			path: tests/PatternMatcher/PatternCollectionTest.php
+
+		-
+			message: "#^Expression \"\\(new \\\\App\\\\PatternMatcher\\\\PatternCollection\\(\\[\\]\\)\\)\\[0\\]\" on a separate line does not do anything\\.$#"
+			count: 1
+			path: tests/PatternMatcher/PatternCollectionTest.php
+
+		-
+			message: "#^Offset 0 does not exist on App\\\\PatternMatcher\\\\PatternCollection\\<\\*NEVER\\*, \\*NEVER\\*\\>\\.$#"
+			count: 1
+			path: tests/PatternMatcher/PatternCollectionTest.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between '\\:'\\|';' and '\\\\\\\\' will always evaluate to false\\.$#"
+			count: 1
+			path: tests/bootstrap.php
+
